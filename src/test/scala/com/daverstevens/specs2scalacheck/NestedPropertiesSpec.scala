@@ -1,25 +1,30 @@
 /*
-[info] Compiling 2 Scala sources to /Users/dave/workspace/specs2-scalacheck/target/scala-2.11/test-classes...
-[info] ! BrokenEqual.equal.commutativity: Falsified after 0 passed tests.
-[info] > ARG_0: 1179661225
+> test
+[info] ! BrokenEqual-no-include.equal: Falsified after 0 passed tests.
+[info] > ARG_0: -1889221378
+[info] > ARG_1: 2147483647
+[info] ! BrokenEqual-include.equal.commutativity: Falsified after 0 passed tests.
+[info] > ARG_0: 1
 [info] > ARG_1: -1
-[info] ! BrokenEqual.equal.reflexive: Falsified after 0 passed tests.
-[info] > ARG_0: -1
-[info] + BrokenEqual.equal.transitive: OK, passed 100 tests.
-[info] + BrokenEqual.equal.naturality: OK, passed 100 tests.
+[info] ! BrokenEqual-include.equal.reflexive: Falsified after 0 passed tests.
+[info] > ARG_0: 1
+[info] + BrokenEqual-include.equal.transitive: OK, passed 100 tests.
+[info] + BrokenEqual-include.equal.naturality: OK, passed 100 tests.
 [info] NestedPropertiesSpec
-[info] x BrokenEqual
-[error]  A counter-example is [1346278381, 1944519558] (after 0 try)
+[info] x BrokenEqual-specs2
+[error]  A counter-example is [-1344045865, 1336869792] (after 0 try)
 [info]
 [info]
 [info] Total for specification NestedPropertiesSpec
-[info] Finished in 47 ms
+[info] Finished in 15 ms
 [info] 1 example, 1 failure, 0 error
 [info]
-[error] Failed: Total 5, Failed 3, Errors 0, Passed 2
+[error] Failed: Total 6, Failed 4, Errors 0, Passed 2
 [error] Failed tests:
 [error] 	com.daverstevens.specs2scalacheck.NestedProperties
+[error] 	com.daverstevens.specs2scalacheck.NestedPropertiesNoInclude
 [error] 	com.daverstevens.specs2scalacheck.NestedPropertiesSpec
+[error] (test:test) sbt.TestsFailedException: Tests unsuccessful
 */
 package com.daverstevens.specs2scalacheck
 
@@ -39,12 +44,17 @@ object BrokenEqualInstances {
     Arbitrary(arbA.arbitrary.map(Tag.apply))
 }
 
-object NestedProperties extends Properties("BrokenEqual") {
+object NestedProperties extends Properties("BrokenEqual-include") {
   import BrokenEqualInstances._
   include(ScalazProperties.equal.laws[Int @@ BrokenEqual])
 }
 
+object NestedPropertiesNoInclude extends Properties("BrokenEqual-no-include") {
+  import BrokenEqualInstances._
+  property("equal") = ScalazProperties.equal.laws[Int @@ BrokenEqual]
+}
+
 class NestedPropertiesSpec extends Specification with ScalaCheck {
   import BrokenEqualInstances._
-  "BrokenEqual" ! ScalazProperties.equal.laws[Int @@ BrokenEqual]
+  "BrokenEqual-specs2" ! ScalazProperties.equal.laws[Int @@ BrokenEqual]
 }
